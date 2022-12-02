@@ -1,0 +1,48 @@
+{
+    "name": "tobento/service-imager",
+    "type": "library",
+    "description": "Image processor interface for PHP applications.",
+    "keywords": [
+        "tobento",
+        "package",
+        "PHP",
+        "image",
+        "processor"
+    ],
+    "homepage": "https://www.tobento.ch",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tobias Strub",
+            "email": "info@tobento.ch",
+            "homepage": "https://www.tobento.ch"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.0",
+        "tobento/service-dir": "^1.0",
+        "tobento/service-filesystem": "^1.0",
+        "tobento/service-message": "^1.0",
+        "intervention/image": "^2.7"
+    },  
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "vimeo/psalm": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tobento\\Service\\Imager\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tobento\\Service\\Imager\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --testdox --colors=always",
+        "psalm": "vendor/bin/psalm"
+    }
+}
