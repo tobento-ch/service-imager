@@ -69,6 +69,8 @@ class Save extends Action implements Calculable
         // assign default quality if not specified:
         if (is_null($quality)) {
             $this->quality = $this->getDefaultQuality($fileMimeType);
+        } else {
+            $this->quality = $this->verifyQuality($quality, $fileMimeType);
         }
         
         // verify overwrite:
@@ -220,6 +222,26 @@ class Save extends Action implements Calculable
                 return 90;
             case 'image/webp':
                 return 90;                
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Returns the verified quality for the specified file mime type.
+     *
+     * @param int $quality
+     * @param null|string $mimeType
+     * @return null|int
+     */
+    protected function verifyQuality(int $quality, null|string $mimeType): null|int
+    {
+        switch ($mimeType) {
+            case 'image/jpeg':
+            case 'image/pjpeg':
+                return ($quality < 0 || $quality > 100) ? 90 : $quality;
+            case 'image/webp':
+                return ($quality < 0 || $quality > 100) ? 90 : $quality;
             default:
                 return null;
         }
