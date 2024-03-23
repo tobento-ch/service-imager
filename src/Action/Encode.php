@@ -23,6 +23,11 @@ use Tobento\Service\Imager\ActionException;
 class Encode extends Action
 {
     /**
+     * @var string
+     */
+    protected string $extension;
+    
+    /**
      * Create a new Encode.
      *
      * @param string $mimeType
@@ -41,6 +46,8 @@ class Encode extends Action
             throw new ActionException(sprintf('Unsupported mimeType: "%s".', $this->mimeType));
         }
         
+        $this->extension = $format;
+        
         $mimeType = $formats->getMimeType(format: $format);
         
         if (is_null($mimeType)) {
@@ -52,6 +59,8 @@ class Encode extends Action
         // handle quality:
         if (is_null($this->quality)) {
             $this->quality = $this->getDefaultQuality($mimeType);
+        } else {
+            $this->quality = $this->verifyQuality($quality, $mimeType);
         }
     }
     
@@ -63,6 +72,16 @@ class Encode extends Action
     public function mimeType(): string
     {
         return $this->mimeType;
+    }
+    
+    /**
+     * Returns the extension such as "jpg".
+     *
+     * @return string
+     */
+    public function extension(): string
+    {
+        return $this->extension;
     }
     
     /**
@@ -121,6 +140,26 @@ class Encode extends Action
                 return 90;
             case 'image/webp':
                 return 90;                
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Returns the verified quality for the specified file mime type.
+     *
+     * @param int $quality
+     * @param null|string $mimeType
+     * @return null|int
+     */
+    protected function verifyQuality(int $quality, null|string $mimeType): null|int
+    {
+        switch ($mimeType) {
+            case 'image/jpeg':
+            case 'image/pjpeg':
+                return ($quality < 0 || $quality > 100) ? 90 : $quality;
+            case 'image/webp':
+                return ($quality < 0 || $quality > 100) ? 90 : $quality;
             default:
                 return null;
         }
