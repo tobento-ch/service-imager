@@ -22,12 +22,13 @@ use Stringable;
  * Encoded
  */
 class Encoded implements ResponseInterface, Stringable
-{    
+{
     /**
      * Create a new File.
      *
      * @param string $encoded The encoded image data.
      * @param string $mimeType
+     * @param string $extension
      * @param int $width
      * @param int $height
      * @param null|int $size
@@ -36,6 +37,7 @@ class Encoded implements ResponseInterface, Stringable
     public function __construct(
         protected string $encoded,
         protected string $mimeType,
+        protected string $extension,
         protected int $width,
         protected int $height,
         protected null|int $size,
@@ -60,6 +62,16 @@ class Encoded implements ResponseInterface, Stringable
     public function mimeType(): string
     {
         return $this->mimeType;
+    }
+    
+    /**
+     * Returns the extension such as "jpg".
+     *
+     * @return string
+     */
+    public function extension(): string
+    {
+        return $this->extension;
     }
     
     /**
