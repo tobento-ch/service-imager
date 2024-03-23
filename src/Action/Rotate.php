@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tobento\Service\Imager\Action;
 
+use Tobento\Service\Imager\ActionException;
+
 /**
  * Rotates image by the specified number of degrees clockwise.
  */
@@ -29,6 +31,10 @@ class Rotate extends Action
         protected string $bgcolor = '#ffffff'
     ) {
         $this->degrees = fmod($degrees, 360);
+        
+        if (preg_match('/^#(?:(?:[0-9a-f]{3}){1,2}|(?:[0-9a-f]{4}){1})$/i', $bgcolor) !== 1) {
+            throw new ActionException('bgcolor should be a valid HEX color without alpha');
+        }
     }
 
     /**
