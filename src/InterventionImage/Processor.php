@@ -160,6 +160,7 @@ class Processor implements ProcessorInterface
                 return new Response\Encoded(
                     encoded: (string)$image,
                     mimeType: $action->mimeType(),
+                    extension: $action->extension(),
                     width: $image->width(),
                     height: $image->height(),
                     size: is_int($filesize) ? $filesize : null, 
