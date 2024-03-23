@@ -16,6 +16,7 @@ namespace Tobento\Service\Imager\Test\Action;
 use PHPUnit\Framework\TestCase;
 use Tobento\Service\Imager\Action;
 use Tobento\Service\Imager\ActionInterface;
+use Tobento\Service\Imager\ActionException;
 
 /**
  * RotateTest
@@ -51,5 +52,12 @@ class RotateTest extends TestCase
     {
         $this->assertSame(20.5, (new Action\Rotate(degrees: 380.5))->degrees());
         $this->assertSame(-20.5, (new Action\Rotate(degrees: -380.5))->degrees());
+    }
+    
+    public function testThrowsActionExceptionIfInvalidBgcolor()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Rotate(degrees: 25.5, bgcolor: '#333ss');
     }
 }

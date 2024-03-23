@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 use Tobento\Service\Imager\Action;
 use Tobento\Service\Imager\ActionInterface;
 use Tobento\Service\Imager\InterventionImage\ImagerFactory;
+use Tobento\Service\Imager\ActionException;
 
 /**
  * ResizeTest
@@ -230,5 +231,26 @@ class ResizeTest extends TestCase
         $action->calculate(imager: $imager, srcWidth: 200, srcHeight: 100);
         $this->assertSame(100, $action->width());
         $this->assertSame(50, $action->height());
+    }
+    
+    public function testThrowsActionExceptionIfWidthIsNotWithinRange()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Resize(width: -500);
+    }
+    
+    public function testThrowsActionExceptionIfHeightIsNotWithinRange()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Resize(height: -80);
+    }
+
+    public function testThrowsActionExceptionIfUpsizeIsNotWithinRange()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Resize(width: 500, upsize: -1.5);
     }
 }

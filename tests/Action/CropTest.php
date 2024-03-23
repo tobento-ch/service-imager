@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 use Tobento\Service\Imager\Action;
 use Tobento\Service\Imager\ActionInterface;
 use Tobento\Service\Imager\InterventionImage\ImagerFactory;
+use Tobento\Service\Imager\ActionException;
 
 /**
  * CropTest
@@ -71,5 +72,19 @@ class CropTest extends TestCase
         
         $this->assertSame(50, $action->x());
         $this->assertSame(25, $action->y());
-    }    
+    }
+    
+    public function testThrowsActionExceptionIfWidthIsNotWithinRange()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Crop(width: -100, height: 50);
+    }
+    
+    public function testThrowsActionExceptionIfHeightIsNotWithinRange()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Crop(width: 100, height: -50);
+    }
 }

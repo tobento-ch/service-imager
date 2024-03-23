@@ -30,6 +30,7 @@ class EncodedTest extends TestCase
         $response = new Response\Encoded(
             encoded: file_get_contents(__DIR__.'/../src/image.jpg'),
             mimeType: 'image/jpeg',
+            extension: 'jpg',
             width: 200,
             height: 150,
             size: filesize(__DIR__.'/../src/image.jpg'),
@@ -49,6 +50,7 @@ class EncodedTest extends TestCase
         $response = new Response\Encoded(
             encoded: $encoded,
             mimeType: 'image/jpeg',
+            extension: 'jpg',
             width: 200,
             height: 150,
             size: filesize(__DIR__.'/../src/image.jpg'),
@@ -56,6 +58,7 @@ class EncodedTest extends TestCase
         );
         
         $this->assertSame('image/jpeg', $response->mimeType());
+        $this->assertSame('jpg', $response->extension());
         $this->assertSame(200, $response->width());
         $this->assertSame(150, $response->height());
         $this->assertSame(20042, $response->size());

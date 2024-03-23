@@ -171,6 +171,32 @@ class SaveTest extends TestCase
         }
     }
     
+    public function testSpecifiedQualityIsVerified()
+    {
+        $qualities = [
+            ['image/jpeg', 80, 80],
+            ['image/jpeg', 300, 90],
+            ['image/jpeg', -300, 90],
+            ['image/pjpeg', 80, 80],
+            ['image/png', 80, null],
+            ['image/gif', 80, null],
+            ['image/webp', 80, 80],
+            ['image/webp', 300, 90],
+            ['image/webp', -300, 90],
+            ['image/tiff', 80, null],
+            ['image/svg+xml', 80, null],
+            ['image/psd', 80, null],
+            ['image/bmp', 80, null],
+            ['image/x-icon', 80, null],
+            ['image/avif', 80, null],
+        ];
+        
+        foreach($qualities as $quality) {
+            $action = new Action\Save(filename: 'path/image.jpg', mimeType: $quality[0], quality: $quality[1]);
+            $this->assertSame($quality[2], $action->quality());
+        }
+    }
+    
     public function testThrowsActionExceptionIfUnsupportedOverwriteMode()
     {
         $this->expectException(ActionException::class);

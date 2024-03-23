@@ -18,6 +18,7 @@ use Tobento\Service\Imager\Action;
 use Tobento\Service\Imager\ActionInterface;
 use Tobento\Service\Imager\ImagerInterface;
 use Tobento\Service\Imager\InterventionImage\ImagerFactory;
+use Tobento\Service\Imager\ActionException;
 use Tobento\Service\Filesystem\Dir;
 
 /**
@@ -99,5 +100,26 @@ class FitTest extends TestCase
         );
         
         (new Dir())->delete(__DIR__.'/src/tmp/');
+    }
+    
+    public function testThrowsActionExceptionIfWidthIsNotWithinRange()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Fit(width: -80, height: 50);
+    }
+    
+    public function testThrowsActionExceptionIfHeightIsNotWithinRange()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Fit(width: 80, height: -50);
+    }
+
+    public function testThrowsActionExceptionIfUpsizeIsNotWithinRange()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Fit(width: 80, height: 50, upsize: -1);
     }
 }

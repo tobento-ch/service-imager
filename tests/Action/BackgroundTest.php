@@ -16,6 +16,7 @@ namespace Tobento\Service\Imager\Test\Action;
 use PHPUnit\Framework\TestCase;
 use Tobento\Service\Imager\Action;
 use Tobento\Service\Imager\ActionInterface;
+use Tobento\Service\Imager\ActionException;
 
 /**
  * BackgroundTest
@@ -48,5 +49,14 @@ class BackgroundTest extends TestCase
         );
         
         $this->assertSame('#333', $action->color());
+    }
+    
+    public function testThrowsActionExceptionIfInvalidColor()
+    {
+        $this->expectException(ActionException::class);
+        
+        $action = new Action\Background(
+            color: '#333tre',
+        );
     }
 }
