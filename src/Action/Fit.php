@@ -47,7 +47,19 @@ class Fit extends Action implements Processable
         protected int $height,
         protected string $position = 'center',
         protected null|float $upsize = null
-    ) {}
+    ) {
+        if ($width < 1 || $width > 10000) {
+            throw new ActionException('Width value should be between 1 and 10000');
+        }
+        
+        if ($height < 1 || $height > 10000) {
+            throw new ActionException('Height value should be between 1 and 10000');
+        }
+        
+        if (!is_null($upsize) && ($upsize < 0.1 || $upsize > 2)) {
+            throw new ActionException('Upsize value should be between 0.1 and 2.0');
+        }
+    }
     
     /**
      * Process the action.

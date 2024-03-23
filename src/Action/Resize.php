@@ -45,7 +45,19 @@ class Resize extends Action implements Calculable
         protected null|int $height = null,
         protected bool $keepRatio = true,
         protected null|float $upsize = null,
-    ) {}
+    ) {
+        if (!is_null($width) && ($width < 1 || $width > 10000)) {
+            throw new ActionException('Width value should be between 1 and 10000');
+        }
+        
+        if (!is_null($height) && ($height < 1 || $height > 10000)) {
+            throw new ActionException('Height value should be between 1 and 10000');
+        }
+        
+        if (!is_null($upsize) && ($upsize < 0.1 || $upsize > 2)) {
+            throw new ActionException('Upsize value should be between 0.1 and 2.0');
+        }
+    }
 
     /**
      * Calculates the action with the specified parameters.
