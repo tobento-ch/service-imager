@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Tobento\Service\Imager\Action;
 
+use Tobento\Service\Imager\ActionException;
+
 /**
  * Applies the specified background color for transparent images.
  */
@@ -25,7 +27,11 @@ class Background extends Action
      */
     public function __construct(
         protected string $color
-    ) {}
+    ) {
+        if (preg_match('/^#(?:(?:[0-9a-f]{3}){1,2}|(?:[0-9a-f]{4}){1})$/i', $color) !== 1) {
+            throw new ActionException('Color should be a valid HEX color without alpha');
+        }
+    }
 
     /**
      * Returns the color.
