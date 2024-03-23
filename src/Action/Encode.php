@@ -60,7 +60,7 @@ class Encode extends Action
         if (is_null($this->quality)) {
             $this->quality = $this->getDefaultQuality($mimeType);
         } else {
-            $this->quality = $this->verifyQuality($quality, $mimeType);
+            $this->quality = $this->verifyQuality($this->quality, $mimeType);
         }
     }
     
