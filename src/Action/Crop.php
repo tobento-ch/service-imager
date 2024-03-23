@@ -36,7 +36,15 @@ class Crop extends Action implements Calculable
         protected int $height,
         protected null|int $x = null,
         protected null|int $y = null,
-    ) {}
+    ) {
+        if ($width < 1 || $width > 10000) {
+            throw new ActionException('Width value should be between 1 and 10000');
+        }
+        
+        if ($height < 1 || $height > 10000) {
+            throw new ActionException('Height value should be between 1 and 10000');
+        }
+    }
     
     /**
      * Calculates the action with the specified parameters.
