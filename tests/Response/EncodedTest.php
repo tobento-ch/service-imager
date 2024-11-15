@@ -65,4 +65,43 @@ class EncodedTest extends TestCase
         $this->assertSame($base64, $response->base64());
         $this->assertSame($dataUrl, $response->dataUrl());
     }
+    
+    /**
+     * @dataProvider humanSizeProvider
+     */
+    public function testHumanSizeMethod(null|int|float $size, int $precision, $expected)
+    {
+        $response = new Response\Encoded(
+            encoded: 'encoded',
+            mimeType: 'image/jpeg',
+            extension: 'jpg',
+            width: 200,
+            height: 150,
+            size: $size,
+            actions: new Actions()
+        );
+        
+        $this->assertSame($expected, $response->humanSize($precision));
+    }
+    
+    public function humanSizeProvider()
+    {
+        return [
+            [null, 2, '0 B'],
+            [0, 2, '0 B'],
+            [10, 2, '10 B'],
+            [1024, 2, '1 KB'],
+            [1024 ** 2, 2, '1 MB'],
+            [1024 ** 3, 2, '1 GB'],
+            [1024 ** 4, 2, '1 TB'],
+            [1024 ** 5, 2, '1 PB'],
+            [1024 ** 6, 2, '1 EB'],
+            [1024 ** 7, 2, '1 ZB'],
+            [1024 ** 8, 2, '1 YB'],
+            [1024 ** 9, 2, '1024 YB'],
+            [1100, 2, '1.07 KB'],
+            [1100, 1, '1.1 KB'],
+            [1100, 3, '1.074 KB'],
+        ];
+    }
 }
