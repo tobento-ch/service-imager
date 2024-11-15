@@ -714,7 +714,8 @@ $mimeType = $response->mimeType(); // string
 $extension = $response->extension(); // string (e.g. "jpg")
 $imageWidth = $response->width(); // int
 $imageHeight = $response->height(); // int
-$imageSize = $response->size(); // null|int
+$imageSize = $response->size(); // null|int|float
+$humanImageSize = $response->humanSize(); // string, like '15 KB'
 ```
 
 ### File Response

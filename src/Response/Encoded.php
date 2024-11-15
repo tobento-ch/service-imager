@@ -24,14 +24,14 @@ use Stringable;
 class Encoded implements ResponseInterface, Stringable
 {
     /**
-     * Create a new File.
+     * Create a new Encoded instance.
      *
      * @param string $encoded The encoded image data.
      * @param string $mimeType
      * @param string $extension
      * @param int $width
      * @param int $height
-     * @param null|int $size
+     * @param null|int|float $size
      * @param ActionsInterface $actions
      */
     public function __construct(
@@ -40,7 +40,7 @@ class Encoded implements ResponseInterface, Stringable
         protected string $extension,
         protected int $width,
         protected int $height,
-        protected null|int $size,
+        protected null|int|float $size,
         protected ActionsInterface $actions
     ) {}
         
@@ -97,11 +97,34 @@ class Encoded implements ResponseInterface, Stringable
     /**
      * Returns the size.
      *
-     * @return null|int
+     * @return null|int|float
      */
-    public function size(): null|int
+    public function size(): null|int|float
     {
         return $this->size;
+    }
+    
+    /**
+     * Returns a human-readable size.
+     *
+     * @param int $precision
+     * @return string
+     */
+    public function humanSize(int $precision = 2): string
+    {
+        $bytes = $this->size();
+        
+        if (is_null($bytes)) {
+            $bytes = 0;
+        }
+
+        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+        for ($i = 0; ($bytes / 1024) > 0.9 && ($i < count($units) - 1); $i++) {
+            $bytes /= 1024;
+        }
+        
+        return sprintf('%s %s', round($bytes, $precision), $units[$i]);
     }
     
     /**
