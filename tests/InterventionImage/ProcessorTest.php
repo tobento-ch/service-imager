@@ -119,8 +119,8 @@ class ProcessorTest extends TestCase
         
         (new Dir())->delete(__DIR__.'/src/tmp/');
         
-        $this->assertTrue(true);        
-    }    
+        $this->assertTrue(true);
+    }
     
     public function testProcessActionMethodSetsProcessedByAction()
     {
@@ -144,5 +144,30 @@ class ProcessorTest extends TestCase
             ],
             $actions
         );        
+    }
+    
+    public function testProcessEncodeActionResponse()
+    {
+        $actions = [
+            new Action\Blur(blur: 20),
+            new Action\Brightness(brightness: 20),
+            new Action\Resize(width: 80),
+            new Action\Encode(mimeType: 'image/webp'),
+        ];
+        
+        $processor = $this->createProcessor();
+        $imager = (new ImagerFactory())->createImager();
+        $imager->file(file: __DIR__.'/../src/image.jpg');
+
+        foreach($actions as $action) {
+            $imager = $processor->processAction(action: $action, imager: $imager);
+        }
+
+        $this->assertNotNull($imager->encoded());
+        $this->assertSame('image/webp', $imager->mimeType());
+        $this->assertSame('webp', $imager->extension());
+        $this->assertSame(80, $imager->width());
+        $this->assertSame(60, $imager->height());
+        $this->assertSame(926, $imager->size());
     }
 }
