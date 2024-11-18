@@ -154,8 +154,16 @@ class Processor implements ProcessorInterface
                 } else {
                     $image = $image->encode($action->mimeType());
                 }
-
-                $filesize = $image->filesize();
+                
+                //$filesize = $image->filesize();
+                //returns original file size!
+                
+                $resource = \fopen('php://memory', 'r+');
+                \fwrite($resource, (string)$image);
+                \fseek($resource, 0);
+                $stats = \fstat($resource);
+                $filesize = $stats['size'] ?? null;
+                \fclose($resource);
                 
                 return new Response\Encoded(
                     encoded: (string)$image,
@@ -163,7 +171,7 @@ class Processor implements ProcessorInterface
                     extension: $action->extension(),
                     width: $image->width(),
                     height: $image->height(),
-                    size: is_int($filesize) ? $filesize : null, 
+                    size: $filesize, 
                     actions: new Actions(...$this->actions)
                 );
             case Action\Flip::class:
