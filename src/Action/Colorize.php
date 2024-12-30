@@ -96,6 +96,6 @@ class Colorize extends Action
      */
     public function description(): string
     {
-        return 'Colorized image with red :red, green :green amd blue :blue.';
+        return 'Colorized image with red :red, green :green and blue :blue.';
     }
 }
