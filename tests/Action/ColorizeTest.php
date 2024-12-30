@@ -35,7 +35,7 @@ class ColorizeTest extends TestCase
         );
         
         $this->assertSame(
-            'Colorized image with red :red, green :green amd blue :blue.',
+            'Colorized image with red :red, green :green and blue :blue.',
             $action->description()
         );
     }
