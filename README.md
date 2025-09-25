@@ -69,7 +69,7 @@ composer require tobento/service-imager
 
 ## Requirements
 
-- PHP 8.0 or greater
+- PHP 8.4 or greater
 
 ## Highlights
 
@@ -86,7 +86,7 @@ composer require tobento/service-imager
 use Tobento\Service\Imager\InterventionImage\ImagerFactory;
 use Tobento\Service\Imager\ImagerInterface;
 
-$imager = (new ImagerFactory())->createImager();
+$imager = new ImagerFactory()->createImager();
 
 var_dump($imager instanceof ImagerInterface);
 // bool(true)
@@ -818,7 +818,7 @@ class SomeActions extends Action implements Processable
     }
 }
 
-$imager = (new ImagerFactory())->createImager();
+$imager = new ImagerFactory()->createImager();
 
 $response = $imager
     ->file('path/image.jpg')
@@ -916,7 +916,7 @@ use Tobento\Service\Imager\Message;
 use Tobento\Service\Imager\ActionsInterface;
 use Tobento\Service\Message\MessagesFactoryInterface;
 
-$imager = (new ImagerFactory())->createImager();
+$imager = new ImagerFactory()->createImager();
 
 $response = $imager
     ->file('path/image.jpg')
@@ -983,7 +983,7 @@ var_dump($imager instanceof ImagerInterface);
 use Tobento\Service\Imager\ImagerInterface;
 use Tobento\Service\Imager\InterventionImage\ImagerFactory;
 
-$imager = (new ImagerFactory())->createImager();
+$imager = new ImagerFactory()->createImager();
 
 var_dump($imager instanceof ImagerInterface);
 // bool(true)
@@ -1135,11 +1135,11 @@ use Tobento\Service\Imager\ImagerInterface;
 use Tobento\Service\Imager\ResponseInterface;
 use Tobento\Service\Imager\ActionProcessException;
 
-$processor = (new ProcessorFactory())->createProcessor(
+$processor = new ProcessorFactory()->createProcessor(
     resource: new File('path/image.jpg'),
 );
 
-$imager = (new ImagerFactory())->createImager();
+$imager = new ImagerFactory()->createImager();
 
 $processed = $processor->processAction(
     action: new Action\Crop(200, 200), // ActionInterface
@@ -1336,7 +1336,7 @@ use Tobento\Service\Imager\Action;
 
 $actions = new Actions(
     new Action\Sepia(),
-    (new Action\Greyscale())->setProcessedBy(Action\Sepia::class),
+    new Action\Greyscale()->setProcessedBy(Action\Sepia::class),
     new Action\Save(filename: 'image.jpg'),
 );
 
@@ -1407,11 +1407,13 @@ var_dump($response->actions() instanceof ActionsInterface);
 ### Intervention Imager Factory
 
 ```php
+use Intervention\Image\Drivers\Gd\Driver;
 use Tobento\Service\Imager\InterventionImage\ImagerFactory;
 use Tobento\Service\Imager\ImagerFactoryInterface;
 
 $imagerFactory = new ImagerFactory(
-    config: ['driver' => 'gd'], // is default
+    driver: Driver::class, // is default
+    options: [],
 );
 
 var_dump($imagerFactory  instanceof ImagerFactoryInterface);
@@ -1425,11 +1427,13 @@ Check out the [Intervention Image Configuration](https://image.intervention.io/v
 ### Intervention Processor Factory
 
 ```php
+use Intervention\Image\Drivers\Gd\Driver;
 use Tobento\Service\Imager\InterventionImage\ProcessorFactory;
 use Tobento\Service\Imager\ProcessorFactoryInterface;
 
 $processorFactory = new ProcessorFactory(
-    config: ['driver' => 'gd'], // is default
+    driver: Driver::class, // is default
+    options: [],
 );
 
 var_dump($processorFactory  instanceof ProcessorFactoryInterface);
