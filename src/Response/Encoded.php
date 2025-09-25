@@ -109,6 +109,7 @@ class Encoded implements ResponseInterface, Stringable
      *
      * @param int $precision
      * @return string
+     * @psalm-suppress InvalidOperand
      */
     public function humanSize(int $precision = 2): string
     {
@@ -124,7 +125,7 @@ class Encoded implements ResponseInterface, Stringable
             $bytes /= 1024;
         }
         
-        return sprintf('%s %s', round($bytes, $precision), $units[$i]);
+        return sprintf('%s %s', round($bytes, $precision), $units[$i] ?? '');
     }
     
     /**
