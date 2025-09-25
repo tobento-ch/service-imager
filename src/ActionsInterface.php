@@ -16,7 +16,7 @@ namespace Tobento\Service\Imager;
 use IteratorAggregate;
 
 /**
- * ActionsInterface.
+ * @extends IteratorAggregate<int, ActionInterface>
  */
 interface ActionsInterface extends IteratorAggregate
 {

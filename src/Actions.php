@@ -119,7 +119,7 @@ class Actions implements ActionsInterface
     /**
      * Returns the iterator. 
      *
-     * @return Traversable
+     * @return Traversable<int, ActionInterface>
      */
     public function getIterator(): Traversable
     {    
