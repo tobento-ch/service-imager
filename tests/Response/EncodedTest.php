@@ -69,7 +69,7 @@ class EncodedTest extends TestCase
     /**
      * @dataProvider humanSizeProvider
      */
-    public function testHumanSizeMethod(null|int|float $size, int $precision, $expected)
+    public function testHumanSizeMethod(null|int|float $size = null, int $precision = 0, $expected = '0 B')
     {
         $response = new Response\Encoded(
             encoded: 'encoded',
