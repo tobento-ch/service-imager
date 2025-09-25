@@ -80,6 +80,8 @@ final class Size
             return new static($width, $height);
         }
         
+        $height = (float)$height;
+        
         return new static($width, (int)round($height*$ratio));
     }
     
@@ -103,7 +105,9 @@ final class Size
         if ($ratio == 1) {
             return new static($width, $height);
         }        
-
+        
+        $width = (float)$width;
+        
         return new static((int)round($width*$ratio), $height);
     }
     
@@ -135,13 +139,13 @@ final class Size
         // handle upsize:
         if (!is_null($upsize) && !$size->fitsInto($this)) {
             if ($keepRatio) {
-                $size = $size->width((int)round($this->getWidth()*$upsize));
+                $size = $size->width((int)round((float)$this->getWidth()*$upsize));
             } else {
                 if ($width) {
-                    $size = $size->width((int)round($this->getWidth()*$upsize), 0);
+                    $size = $size->width((int)round((float)$this->getWidth()*$upsize), 0);
                 }
                 if ($height) {
-                    $size = $size->height((int)round($this->getHeight()*$upsize), 0);
+                    $size = $size->height((int)round((float)$this->getHeight()*$upsize), 0);
                 }
             }
         }
@@ -190,7 +194,8 @@ final class Size
      */
     protected function calculateSize(int $targetSize, int $sizeA, int $sizeB): int
     {
-        $ratio = $sizeB / $sizeA;
+        $ratio = (float)$sizeB / (float)$sizeA;
+        $targetSize = (float)$targetSize;
         return (int) round($targetSize * $ratio);
     }
 }
