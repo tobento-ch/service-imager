@@ -28,7 +28,7 @@ class ProcessorFactoryTest extends TestCase
 {
     public function testThatImplementsProcessorFactoryInterface()
     {
-        $processorFactory = new ProcessorFactory(config: ['driver' => 'gd']);
+        $processorFactory = new ProcessorFactory();
         
         $this->assertInstanceof(
             ProcessorFactoryInterface::class,
@@ -77,7 +77,7 @@ class ProcessorFactoryTest extends TestCase
             );
         } catch (ProcessorCreateException $e) {
             $this->assertSame(
-                'Unable to create processor',
+                'Unable to create processor: Unable to decode input',
                 $e->getMessage()
             );
         }

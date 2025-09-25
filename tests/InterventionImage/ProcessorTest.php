@@ -21,6 +21,7 @@ use Tobento\Service\Imager\ProcessorInterface;
 use Tobento\Service\Imager\ImagerInterface;
 use Tobento\Service\Imager\Action;
 use Tobento\Service\Imager\ActionProcessException;
+use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Image;
 use Tobento\Service\Filesystem\Dir;
@@ -33,7 +34,7 @@ class ProcessorTest extends TestCase
     protected function createProcessor(): Processor
     {
         return new Processor(
-            image: (new ImageManager(['driver' => 'gd']))->make(__DIR__.'/../src/image.jpg')
+            image: (new ImageManager(Driver::class))->read(__DIR__.'/../src/image.jpg')
         );
     }
     
@@ -168,6 +169,6 @@ class ProcessorTest extends TestCase
         $this->assertSame('webp', $imager->extension());
         $this->assertSame(80, $imager->width());
         $this->assertSame(60, $imager->height());
-        $this->assertSame(926, $imager->size());
+        $this->assertSame(894, $imager->size());
     }
 }

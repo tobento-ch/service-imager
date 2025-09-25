@@ -25,7 +25,7 @@ class ImagerFactoryTest extends TestCase
 {
     public function testThatImplementsImagerFactoryInterface()
     {
-        $imagerFactory = new ImagerFactory(config: ['driver' => 'gd']);
+        $imagerFactory = new ImagerFactory();
         
         $this->assertInstanceof(
             ImagerFactoryInterface::class,
