@@ -16,7 +16,9 @@ namespace Tobento\Service\Imager\InterventionImage;
 use Tobento\Service\Imager\ImagerFactoryInterface;
 use Tobento\Service\Imager\ImagerInterface;
 use Tobento\Service\Imager\Imager;
+use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Interfaces\DriverInterface;
 
 /**
  * ImagerFactory
@@ -26,10 +28,12 @@ class ImagerFactory implements ImagerFactoryInterface
     /**
      * Create a new ImagerFactory.
      *
-     * @param array $config
+     * @param string|DriverInterface $driver
+     * @param array $options
      */
     public function __construct(
-        protected array $config = ['driver' => 'gd']
+        protected string|DriverInterface $driver = Driver::class,
+        protected array $options = [],
     ) {}
     
     /**
@@ -40,7 +44,7 @@ class ImagerFactory implements ImagerFactoryInterface
     public function createImager(): ImagerInterface
     {
         return new Imager(
-            processorFactory: new ProcessorFactory($this->config)
+            processorFactory: new ProcessorFactory($this->driver, $this->options)
         );
     }
 }

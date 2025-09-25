@@ -18,21 +18,22 @@ use Tobento\Service\Imager\ProcessorInterface;
 use Tobento\Service\Imager\ResourceInterface;
 use Tobento\Service\Imager\Resource;
 use Tobento\Service\Imager\ProcessorCreateException;
+use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Interfaces\DriverInterface;
 use Exception;
 
-/**
- * ProcessorFactory
- */
 class ProcessorFactory implements ProcessorFactoryInterface
 {
     /**
      * Create a new ProcessorFactory.
      *
-     * @param array $config
+     * @param string|DriverInterface $driver
+     * @param array $options
      */
     public function __construct(
-        protected array $config = ['driver' => 'gd']
+        protected string|DriverInterface $driver = Driver::class,
+        protected array $options = [],
     ) {}    
     
     /**
@@ -51,7 +52,7 @@ class ProcessorFactory implements ProcessorFactoryInterface
                 $src = $resource->file()->getFile();
                 break;
             case Resource\Url::class:
-                $src = $resource->url();
+                $src = (string)@file_get_contents($resource->url());
                 break;
             case Resource\Binary::class:
                 $src = $resource->data();
@@ -60,7 +61,7 @@ class ProcessorFactory implements ProcessorFactoryInterface
                 $src = $resource->data();
                 break;
             case Resource\Stream::class:
-                $src = $resource->stream();
+                $src = (string)$resource->stream();
                 break;
             case Resource\DataUrl::class:
                 $src = $resource->data();
@@ -70,12 +71,12 @@ class ProcessorFactory implements ProcessorFactoryInterface
         if (is_null($src)) {
             throw new ProcessorCreateException('Unsupported resource: '.$resource::class);
         }
-                
+        
         try {
-            $manager = new ImageManager($this->config);
-            return new Processor($manager->make($src));
+            $manager = new ImageManager($this->driver, ...$this->options);
+            return new Processor($manager->read($src));
         } catch (Exception $e) {
-            throw new ProcessorCreateException('Unable to create processor', 0, $e);
+            throw new ProcessorCreateException(sprintf('Unable to create processor: %s', $e->getMessage()), 0, $e);
         }
     }    
 }

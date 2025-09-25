@@ -118,25 +118,20 @@ class Processor implements ProcessorInterface
     protected function callAction(Image $image, ActionInterface $action, ImagerInterface $imager): mixed
     {
         if ($action instanceof Action\Calculable) {
-            $action->calculate($imager, $image->getWidth(), $image->getHeight());
+            $action->calculate($imager, $image->width(), $image->height());
         }
         
         if ($action instanceof Action\Processable) {
-            return $action->process($imager, $image->getWidth(), $image->getHeight());
+            return $action->process($imager, $image->width(), $image->height());
         }
             
         switch ($action::class) {
             case Action\Background::class:
+                $new = $image->driver()
+                    ->createImage($image->width(), $image->height())
+                    ->fill($action->color());
                 
-                $new = $image->getDriver()->newImage(
-                    $image->getWidth(),
-                    $image->getHeight(),
-                    $action->color()
-                );
-
-                $new->mime = $image->mime;
-
-                return $new->insert($image, 'top-left', 0, 0);
+                return $new->place($image, 'top-left', 0, 0);
             case Action\Blur::class:
                 return $image->blur($action->blur());
             case Action\Brightness::class:
@@ -150,39 +145,40 @@ class Processor implements ProcessorInterface
             case Action\Encode::class:
                 
                 if (is_int($action->quality())) {
-                    $image = $image->encode($action->mimeType(), $action->quality());
+                    $encoded = $image->encodeByMediaType(type: $action->mimeType(), quality: $action->quality());
                 } else {
-                    $image = $image->encode($action->mimeType());
+                    $encoded = $image->encodeByMediaType(type: $action->mimeType());
                 }
                 
-                //$filesize = $image->filesize();
-                //returns original file size!
-                
-                $resource = \fopen('php://memory', 'r+');
-                \fwrite($resource, (string)$image);
-                \fseek($resource, 0);
-                $stats = \fstat($resource);
-                $filesize = $stats['size'] ?? null;
-                \fclose($resource);
-                
                 return new Response\Encoded(
-                    encoded: (string)$image,
+                    encoded: (string)$encoded,
                     mimeType: $action->mimeType(),
                     extension: $action->extension(),
                     width: $image->width(),
                     height: $image->height(),
-                    size: $filesize, 
+                    size: $encoded->size(), 
                     actions: new Actions(...$this->actions)
                 );
             case Action\Flip::class:
-                $mode = $action->flip() === Action\Flip::HORIZONTAL ? 'h' : 'v';
-                return $image->flip($mode);
+                if ($action->flip() === Action\Flip::HORIZONTAL) {
+                    return $image->flop();
+                }
+                return $image->flip();
             case Action\Gamma::class:
                 return $image->gamma($action->gamma());
             case Action\Greyscale::class:
                 return $image->greyscale();
             case Action\Orientate::class:
-                return $image->orientate();
+                return match ($image->exif()->get('Orientation')) {
+                    2 => $image->flip(),
+                    3 => $image->rotate(180),
+                    4 => $image->rotate(180)->flip(),
+                    5 => $image->rotate(270)->flip(),
+                    6 => $image->rotate(270),
+                    7 => $image->rotate(90)->flip(),
+                    8 => $image->rotate(90),
+                    default => $image,
+                };
             case Action\Pixelate::class:
                 return $image->pixelate($action->pixelate());
             case Action\Resize::class:
@@ -191,14 +187,14 @@ class Processor implements ProcessorInterface
                 
                 // change rotation as intervention rotates counter-clockwise
                 // but action is clockwise.
-                $degress = ($action->degrees() * -1);
+                $degress = ($action->degrees() * -1.0);
                 
                 return $image->rotate($degress, $action->bgcolor());
             case Action\Save::class:
                 $image->save($action->filename(), $action->quality());
                 
                 // destroy resource
-                $image->destroy();
+                unset($image);
                 
                 return new Response\File(
                     file: $action->filename(),
