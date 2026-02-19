@@ -967,9 +967,17 @@ This is especially useful when actions come from **user input**, **editor templa
 #### Creating an ImageActions instance
 
 ```php
+use Tobento\Service\Imager\ActionFactoryInterface;
 use Tobento\Service\Imager\ImageActions;
+use Tobento\Service\Imager\ImageActionsInterface;
 
 $actions = new ImageActions(['crop', 'resize', 'sepia']);
+
+var_dump($actions instanceof ImageActionsInterface);
+// bool(true)
+
+var_dump($actions instanceof ActionFactoryInterface);
+// bool(true)
 ```
 
 The constructor accepts a list of allowed action names.  
