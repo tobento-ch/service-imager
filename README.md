@@ -44,6 +44,7 @@ Image processor interface for PHP applications using [Intervention Image](https:
         - [Grouping Actions](#grouping-actions)
         - [Creating New Action](#creating-new-action)
         - [Actions To Messages](#actions-to-messages)
+        - [Image Actions](#image-actions)
     - [Interfaces](#interfaces)
         - [Imager Factory Interface](#imager-factory-interface)
         - [Imager Interface](#imager-interface)
@@ -946,6 +947,165 @@ foreach($messages as $message) {
 You may check out the [Message Service](https://github.com/tobento-ch/service-message) to learn more about it.
 
 You may check out the [Actions Interface](#actions-interface) to learn more about it.
+
+### Image Actions
+
+`ImageActions` is a high-level manager for working with Imager actions.  
+It provides validation, filtering, and safe instantiation of image manipulation actions before they are passed to the processor.
+
+This is especially useful when actions come from **user input**, **editor templates**, or **dynamic configuration**, where parameters must be sanitized and unsupported actions must be rejected gracefully.
+
+**Key Features**
+- Define which actions are allowed (withActions())
+- Filter actions (e.g., only filters like greyscale, sepia)
+- Validate user-provided action lists
+- Convert parameter types (numeric strings, booleans, etc.)
+- Remove unsupported parameters (e.g., scale for crop)
+- Safely create ActionInterface instances
+- Optional PSR-3 logging for invalid actions
+
+#### Creating an ImageActions instance
+
+```php
+use Tobento\Service\Imager\ImageActions;
+
+$actions = new ImageActions(['crop', 'resize', 'sepia']);
+```
+
+The constructor accepts a list of allowed action names.  
+Only valid actions are kept; unknown names are ignored.
+
+#### Filtering actions
+
+You can create a new instance containing only filter actions:
+
+```php
+$filters = $actions->filters(); // ['greyscale', 'sepia']
+
+// Or the opposite:
+$nonFilters = $actions->filters(false);
+```
+
+Both methods return a new instance, keeping the original immutable.
+
+#### Validating user input
+
+When actions come from a request (e.g., an image editor), they must be validated:
+
+```php
+$validated = $actions->verifyInputActions([
+    'resize' => ['width' => '200', 'keepRatio' => 'true'],
+    'sepia'  => [],
+]);
+```
+
+Result:
+
+```php
+[
+    'resize' => [
+        'width' => 200,
+        'height' => null,
+        'keepRatio' => true,
+        'upsize' => null,
+        'srcWidth' => null,
+        'srcHeight' => null,
+    ],
+    'sepia' => [],
+]
+```
+
+Invalid actions or parameters are ignored, and optionally logged.
+
+#### Retrieving and Inspecting Actions
+
+`ImageActions` provides several helper methods for inspecting the currently allowed actions. These are useful when building editors, debugging templates, or dynamically adjusting available actions.
+
+**`all()`**
+
+Returns all action names that are currently allowed for this instance.
+
+```php
+use Tobento\Service\Imager\ImageActions;
+
+$actions = new ImageActions(['crop', 'resize', 'sepia']);
+
+$actions->all();
+// ['crop', 'resize', 'sepia']
+```
+
+**`has(string $action)`**
+
+Checks whether a specific action name is allowed.
+
+```php
+use Tobento\Service\Imager\ImageActions;
+
+$actions = new ImageActions(['crop', 'sepia']);
+
+$actions->has('crop'); // true
+$actions->has('greyscale'); // false
+```
+
+This is useful when validating editor templates or conditional UI elements.
+
+**`getAllowedActions()`**
+
+Returns the list of allowed action **classes**, not names.
+
+```php
+use Tobento\Service\Imager\Action;
+use Tobento\Service\Imager\ImageActions;
+
+$actions = new ImageActions(['crop', 'sepia']);
+
+ $actions->getAllowedActions();
+ // [ Action\Crop::class ]
+```
+
+This is primarily used internally by processors or advanced integrations that need to know which concrete `ActionInterface` implementations are permitted.
+
+#### Creating an action instance
+
+You can also create a single action manually:
+
+```php
+use Tobento\Service\Imager\ActionCreateException;
+
+$action = $actions->createAction('crop', [
+    'width' => 100,
+    'height' => 100,
+]);
+```
+
+If the action name is unknown or parameters are invalid, an `ActionCreateException` is thrown.
+
+#### Using a logger
+
+`ImageActions` accepts an optional PSR-3 logger:
+
+```php
+use Psr\Log\LoggerInterface;
+use Tobento\Service\Imager\ImageActions;
+
+$actions = new ImageActions(
+    actions: ['crop', 'resize'],
+    logger: $logger, // LoggerInterface or null (default)
+);
+```
+
+Invalid user actions will be logged at `notice` level.
+
+#### When to use ImageActions
+
+Use ImageActions whenever:
+- You accept image actions from user input
+- You want to restrict which actions are allowed
+- You need to sanitize parameters
+- You want to prevent invalid actions from reaching the processor
+- You build an image editor or similar UI component
+
+It is the recommended high-level action manager for all editor-style workflows.
 
 ## Interfaces
 
