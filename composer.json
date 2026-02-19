@@ -1,6 +1,6 @@
 {
     "name": "tobento/service-imager",
-    "version": "2.0",
+    "version": "2.0.1",
     "type": "library",
     "description": "Image processor interface for PHP applications.",
     "keywords": [
@@ -31,7 +31,8 @@
     "require-dev": {
         "phpunit/phpunit": "^12.3",
         "vimeo/psalm": "^6.13",
-        "guzzlehttp/psr7": "^2.8"
+        "guzzlehttp/psr7": "^2.8",
+        "monolog/monolog": "^3.9"
     },
     "autoload": {
         "psr-4": {
