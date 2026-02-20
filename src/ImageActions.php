@@ -45,7 +45,7 @@ class ImageActions implements ImageActionsInterface
      */
     final public function __construct(
         array $actions = [],
-        protected null|LoggerInterface $logger = null,
+        private null|LoggerInterface $logger = null,
     ) {
         foreach($actions as $action) {
             if (in_array($action, ['quality', 'format'])) {
