@@ -1,6 +1,6 @@
 {
     "name": "tobento/service-imager",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "type": "library",
     "description": "Image processor interface for PHP applications.",
     "keywords": [
